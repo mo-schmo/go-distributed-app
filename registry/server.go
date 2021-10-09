@@ -33,7 +33,7 @@ func (r *registry) remove(url string) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("Service at URL %v not found", url)
+	return fmt.Errorf("service at URL %v not found", url)
 }
 
 var reg = registry{
@@ -73,7 +73,7 @@ func (s RegistryService) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		err = reg.remove(url)
 		if err != nil {
 			log.Println(err)
-			wr.WriteHeader(http.StatusBadRequest)
+			wr.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 	default:
