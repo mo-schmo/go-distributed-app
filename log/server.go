@@ -35,6 +35,6 @@ func RegisterHandlers() {
 	})
 }
 
-func write(msg string) {
-	log.Printf("%v\n", msg)
+func write(message string) {
+	log.Printf("%v\n", message)
 }

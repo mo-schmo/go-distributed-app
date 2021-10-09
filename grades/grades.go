@@ -22,6 +22,11 @@ func (s Student) Average() float32 {
 
 type Students []Student
 
+var (
+	students      Students
+	studentsMutex sync.Mutex
+)
+
 func (s Students) GetByID(id int) (*Student, error) {
 	for i := range s {
 		if s[i].ID == id {
@@ -29,13 +34,8 @@ func (s Students) GetByID(id int) (*Student, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("Student iwth ID %v not found", id)
+	return nil, fmt.Errorf("Student with ID '%v' not found", id)
 }
-
-var (
-	students      Students
-	studentsMutex sync.Mutex
-)
 
 type GradeType string
 

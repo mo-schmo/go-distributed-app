@@ -13,8 +13,9 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
 	var srv http.Server
-	srv.Addr = registry.ServerPort
+	srv.Addr = ":3000"
 
 	go func() {
 		log.Println(srv.ListenAndServe())
@@ -22,7 +23,7 @@ func main() {
 	}()
 
 	go func() {
-		fmt.Println("Registry service started,  Press any key to stop.")
+		fmt.Println("Registry service started. Press any key to stop.")
 		var s string
 		fmt.Scanln(&s)
 		srv.Shutdown(ctx)
@@ -30,5 +31,5 @@ func main() {
 	}()
 
 	<-ctx.Done()
-	fmt.Println("Shutting down registry service...")
+	fmt.Println("Shutting down registry service")
 }
