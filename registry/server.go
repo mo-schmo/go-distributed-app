@@ -25,7 +25,7 @@ func (r *registry) add(reg Registration) error {
 	err := r.sendRequiredServices(reg)
 	r.notify(patch{
 		Added: []patchEntry{
-			patchEntry{Name: reg.ServiceName, URL: reg.ServiceURL},
+			{Name: reg.ServiceName, URL: reg.ServiceURL},
 		},
 	})
 	return err
@@ -73,7 +73,7 @@ func (r *registry) remove(url string) error {
 		if r.registrations[i].ServiceURL == url {
 			r.notify(patch{
 				Removed: []patchEntry{
-					patchEntry{Name: r.registrations[i].ServiceName, URL: r.registrations[i].ServiceURL},
+					{Name: r.registrations[i].ServiceName, URL: r.registrations[i].ServiceURL},
 				},
 			})
 			r.mutex.Lock()
