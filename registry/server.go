@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 )
 
 const ServerPort = ":3000"
@@ -66,6 +67,47 @@ func (r registry) notify(fullPatch patch) {
 var reg = registry{
 	registrations: make([]Registration, 0),
 	mutex:         new(sync.RWMutex),
+}
+
+func (r *registry) heartBeat(freq time.Duration) {
+	for {
+		var wg sync.WaitGroup
+		for _, reg := range r.registrations {
+			wg.Add(1)
+			go func(reg Registration) {
+				defer wg.Done()
+				success := true
+				for attempts := 0; attempts < 3; attempts++ {
+					res, err := http.Get(reg.HeartbeatURL)
+					if err != nil {
+						log.Println(err)
+					} else if res.StatusCode == http.StatusOK {
+						log.Printf("Hearbeat check passed for %v", reg.ServiceName)
+						if !success {
+							r.add(reg)
+						}
+						break
+					}
+					log.Printf("Heartbeat check for failed for service for %v", reg.ServiceName)
+					if success {
+						success = false
+						r.remove(reg.ServiceURL)
+					}
+					time.Sleep(1 * time.Second)
+				}
+			}(reg)
+			wg.Wait()
+			time.Sleep(freq)
+		}
+	}
+}
+
+var once sync.Once
+
+func SetupRegistryService() {
+	once.Do(func() {
+		go reg.heartBeat(3 * time.Second)
+	})
 }
 
 func (r *registry) remove(url string) error {

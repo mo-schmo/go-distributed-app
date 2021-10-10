@@ -10,7 +10,7 @@ import (
 	stlog "log"
 )
 
-func main(){
+func main() {
 	err := teacherportal.ImportTemplates()
 	if err != nil {
 		stlog.Fatal(err)
@@ -18,7 +18,6 @@ func main(){
 
 	host, port := "localhost", "5000"
 	serviceAddress := fmt.Sprintf("http://%v:%v", host, port)
-
 
 	var r registry.Registration
 	r.ServiceName = registry.TeacherPortal
@@ -28,6 +27,7 @@ func main(){
 		registry.GradingService,
 	}
 	r.ServiceUpdateURL = r.ServiceURL + "/services"
+	r.HeartbeatURL = r.ServiceURL + "/heartbeat"
 
 	ctx, err := service.Start(context.Background(), host, port, r, teacherportal.RegisterHandlers)
 	if err != nil {
